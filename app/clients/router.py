@@ -18,12 +18,12 @@ async def predict(data: PredictionInput):
 
 # Creating a new client
 @router.post("/", response_model=Client)
-def create_new_client(client: ClientCreate, db: Session = Depends(get_db)):
+async def create_new_client(client: ClientCreate, db: Session = Depends(get_db)):
     return create_client(db=db, client=client)
 
 # Retrieving a specific client by ID
 @router.get("/{client_id}", response_model=Client)
-def read_client(client_id: int, db: Session = Depends(get_db)):
+async def read_client(client_id: int, db: Session = Depends(get_db)):
     client = get_client(db=db, client_id=client_id)
     if client is None:
         raise HTTPException(status_code=404, detail="Client not found")
@@ -31,21 +31,21 @@ def read_client(client_id: int, db: Session = Depends(get_db)):
 
 # Retrieving all clients with options to skip a certain number of results and limit the number of results shown
 @router.get("/", response_model=List[Client])
-def read_clients(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+async def read_clients(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return get_clients(db=db, skip=skip, limit=limit)
 
 # Updating a client's information
 @router.put("/{client_id}", response_model=Client)
-def update_existing_client(client_id: int, client: ClientUpdate, db: Session = Depends(get_db)):
+async def update_existing_client(client_id: int, client: ClientUpdate, db: Session = Depends(get_db)):
     db_client = update_client(db=db, client_id=client_id, client=client)
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    return db_client
+    return {f"Client with ID " {client_id} "is updated successfully!"}
 
 # Deleting a client
 @router.delete("/{client_id}", response_model=Client)
-def delete_existing_client(client_id: int, db: Session = Depends(get_db)):
+async def delete_existing_client(client_id: int, db: Session = Depends(get_db)):
     db_client = delete_client(db=db, client_id=client_id)
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    return db_client
+    return {f"Client with ID " {client_id} "is deleted successfully!"}

@@ -21,11 +21,14 @@ def get_clients(db: Session, skip: int = 0, limit: int = 10):
 # Updates an existing client record with only the fields provided in client
 def update_client(db: Session, client_id: int, client: ClientUpdate):
     db_client = db.query(Client).filter(Client.id == client_id).first()
-    if db_client:
-        for key, value in client.dict(exclude_unset=True).items():
-            setattr(db_client, key, value)
-        db.commit()
-        db.refresh(db_client)
+    if not db_client:
+        # Raise an error if the client is not found
+        raise ValueError(f"Client with ID {client_id} not found.")
+    # Update the client with the provided data
+    for key, value in client.dict(exclude_unset=True).items():
+        setattr(db_client, key, value)
+    db.commit()
+    db.refresh(db_client)
     return db_client
 
 # Deletes a client record by client_id
