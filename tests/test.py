@@ -2,7 +2,7 @@ from logic import interpret_and_calculate
 from itertools import combinations_with_replacement, product
 from fastapi.testclient import TestClient
 from app.main import app
-from app.database import Base, get_db   #not implemented yet
+from app.database import Base, get_db
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
