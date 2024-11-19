@@ -40,7 +40,7 @@ async def update_existing_client(client_id: int, client: ClientUpdate, db: Sessi
     db_client = update_client(db=db, client_id=client_id, client=client)
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    return {f"Client with ID " {client_id} "is updated successfully!"}
+    return {f"Client with ID {client_id} is updated successfully!"}
 
 # Deleting a client
 @router.delete("/{client_id}", response_model=Client)
@@ -48,4 +48,4 @@ async def delete_existing_client(client_id: int, db: Session = Depends(get_db)):
     db_client = delete_client(db=db, client_id=client_id)
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
-    return {f"Client with ID " {client_id} "is deleted successfully!"}
+    return {f"Client with ID {client_id} is deleted successfully!"}
