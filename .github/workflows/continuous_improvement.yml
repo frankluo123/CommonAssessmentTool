@@ -17,7 +17,7 @@ jobs:
     steps:
     # Step 1: Checking out the repository's code
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v4.8.0
 
     # Step 2: Setting up Python
     - name: Set up Python
