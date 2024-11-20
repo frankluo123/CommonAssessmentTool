@@ -25,6 +25,13 @@ jobs:
       with:
         python-version: 3.10.11
 
+    # Debugging step to check the Python environment
+    - name: Debugging Logs
+      run: |
+        python --version
+        pip --version
+        pip list
+        
     # Step 3: Installing dependencies
     - name: Install Dependencies
       run: |
