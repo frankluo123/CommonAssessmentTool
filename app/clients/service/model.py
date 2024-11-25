@@ -1,14 +1,17 @@
-import pandas as pd
-import json
-import numpy as np
+'''Creates the model'''
+# pylint: disable=all
+
 import pickle
+import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 
 
 def prepare_models():
+    '''Prepare models'''
     # Load dataset and define the features and labels
-    backendCode = pd.read_csv('data_commontool.csv')
+    backend_code = pd.read_csv('data_commontool.csv')
     # Define categorical columns and interventions
     categorical_cols = ['age',
                         'gender', #bool
@@ -21,7 +24,7 @@ def prepare_models():
                         'fluent_english', #english level fluency, scale (1-10)
                         'reading_english_scale', #reading scale (1-10)
                         'speaking_english_scale', #speaking level comfort (1-10)
-                        'writing_english_scale', #writing scale (1-10) 
+                        'writing_english_scale', #writing scale (1-10)
                         'numeracy_scale', #numeracy scale (1-10)
                         'computer_scale', #computer use scale (1-10)
                         'transportation_bool', #need transportation support (bool)
@@ -45,28 +48,28 @@ def prepare_models():
     ]
     categorical_cols.extend(interventions)
     # Prepare training data
-    X_categorical_baseline = backendCode[categorical_cols]
+    x_categorical_baseline = backendCode[categorical_cols]
     y_baseline = backendCode['success_rate']
-    X_categorical_baseline = np.array(X_categorical_baseline)
+    x_categorical_baseline = np.array(x_categorical_baseline)
     y_baseline = np.array(y_baseline)
-    X_train_baseline, X_test_baseline, y_train_baseline, y_test_baseline = train_test_split(
-        X_categorical_baseline, y_baseline, test_size=0.2, random_state=42)
+    x_train_baseline, x_test_baseline, y_train_baseline, y_test_baseline = train_test_split(
+        x_categorical_baseline, y_baseline, test_size=0.2, random_state=42)
 
     rf_model_baseline = RandomForestRegressor(n_estimators=100, random_state=42)
-    rf_model_baseline.fit(X_train_baseline, y_train_baseline)
+    rf_model_baseline.fit(x_train_baseline, y_train_baseline)
 
-    # Example: Predicting on the test set
-    baseline_predictions = rf_model_baseline.predict(X_test_baseline)
-
-    
     return rf_model_baseline
 
+
 def main():
+    '''Prepare and start model'''
+
     print("Start model.")
     model = prepare_models()
 
     pickle.dump(model, open("model.pkl", "wb")) #saves model to the file name input, write binary
     model = pickle.load(open("model.pkl", "rb")) #read binary
+
 
 if __name__ == "__main__":
     main()

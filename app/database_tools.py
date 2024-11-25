@@ -1,5 +1,6 @@
-from app.database import engine
+'''Module contains functions to load and read database from csv'''
 import pandas as pd
+from app.database import engine
 
 
 def load_csv_to_db(csv_path, table_name, mode='append'):
@@ -14,7 +15,7 @@ def load_csv_to_db(csv_path, table_name, mode='append'):
         raise ValueError("Mode must be 'append', 'replace', or 'fail'.")
     try:
         df.to_sql(table_name, engine, if_exists=mode, index=False)
-    except Exception as e:
+    except ValueError as e:
         print(f"Error: {e}")
     print('success csv to db !')
 
@@ -31,10 +32,11 @@ def read_db_to_csv(file_path, table_name, sql=None, mode='w'):
     try:
         df = pd.read_sql(query, engine)
         df.to_csv(file_path, index=False, mode=mode)
-    except Exception as e:
+    except ValueError as e:
         print(f"Error: {e}")
     print('success db to csv file !')
 
 
 if __name__ == '__main__':
-    load_csv_to_db(r"C:\Users\zq789\OneDrive\Desktop\common_assess\data_sample.csv", 'persons', 'replace')
+    load_csv_to_db(r"C:\Users\zq789\OneDrive\Desktop\common_assess\data_sample.csv",
+                   'persons', 'replace')

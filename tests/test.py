@@ -1,5 +1,9 @@
-from logic import interpret_and_calculate
+'''Module containing tests'''
+
 from itertools import combinations_with_replacement
+from itertools import product
+# from logic import interpret_and_calculate
+
 
 # def test_interpret_and_calculate():
 #     print("running tests")
@@ -9,7 +13,6 @@ from itertools import combinations_with_replacement
 #     result = interpret_and_calculate(data)
 #     print(data)
 
-from itertools import product
 
 # Cartesian product of [0, 1] repeated 2 times
 result = list(product([0, 1], repeat=2))
