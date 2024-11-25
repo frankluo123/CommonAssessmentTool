@@ -59,7 +59,7 @@ jobs:
       - name: Configure Test Enviroment
         run: |
           pip install pytest
-          pytest test_crud
+          pytest
 
       - name: Wait for MySQL to be ready
         run: |

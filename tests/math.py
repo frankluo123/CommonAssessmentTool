@@ -1,4 +1,4 @@
-'''Module containing tests'''
+'''Module containing some math'''
 
 from itertools import combinations_with_replacement
 from itertools import product
