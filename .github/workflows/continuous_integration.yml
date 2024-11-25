@@ -10,29 +10,82 @@ on:
       - main
 
 jobs:
-  build:
+  setup-and-build:
+    name: Setup and Run Application
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: common_assess
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+      - uses: actions/checkout@v4
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Check versions 
+        run: |
+          python --version
+          pip --version
+          
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pymysql
+
+      # Step 4: Wait for MySQL service to be ready
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..30}; do
+            mysqladmin ping -h 127.0.0.1 --silent && break
+            echo "Waiting for MySQL..." && sleep 2
+          done
+      
+      # Step 5: Run database migrations (if required)
+      - name: Apply Database Migrations
+        run: |
+          python app/database.py
+
+    # Step 6: Run the application
+      - name: Run Application
+        run: |
+          nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload &
+
+  pylint:
+    name: Run Pylint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v4.8.0
-      with:
-        python-version: 3.10.11
-    - name: Check versions 
-      run: |
-        python --version
-        pip --version
-    - name: Upgrade pip
-      run: |
-        python -m pip install --upgrade pip
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-    - name: Run Pylint
-      run: |
-        pip install pylint
-        pylint $(git ls-files '*.py')
-    - name: Run Unit Tests
-      run: |
-        pip install pytest
-        pytest test
+      - name: Linter Check
+        run: |
+          pip install pylint
+          pylint $(git ls-files '*.py')
+
+  unit-testing:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Test Enviroment
+        run: |
+          pip install pytest
+          pytest test_crud
