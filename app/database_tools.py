@@ -2,18 +2,18 @@ from app.database import engine
 import pandas as pd
 
 
-def load_csv_to_db(csv_path, table_name, model='append'):
+def load_csv_to_db(csv_path, table_name, mode='append'):
     """
-    model:
+    mode:
         append: Append to the table.
         replace: Replace the table.
         fail: Raise an error if the table already exists.
     """
     df = pd.read_csv(csv_path)
-    if model not in ['append', 'replace', 'fail']:
-        raise ValueError("Model must be 'append', 'replace', or 'fail'.")
+    if mode not in ['append', 'replace', 'fail']:
+        raise ValueError("Mode must be 'append', 'replace', or 'fail'.")
     try:
-        df.to_sql(table_name, engine, if_exists=model, index=False)
+        df.to_sql(table_name, engine, if_exists=mode, index=False)
     except Exception as e:
         print(f"Error: {e}")
     print('success csv to db !')
