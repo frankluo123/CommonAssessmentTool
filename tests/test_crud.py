@@ -129,5 +129,7 @@ def test_delete_client():
     mock_db = MagicMock()
     mock_db.query().filter().first.return_value = {"id": 1, "name": "Test Client"}
 
+    delete_client(mock_db, client_id=1)
+
     mock_db.delete.assert_called_once()
     mock_db.commit.assert_called_once()
