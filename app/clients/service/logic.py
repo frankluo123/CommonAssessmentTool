@@ -1,9 +1,6 @@
-from typing import List
-import pandas as pd
-import json
+import os
 import numpy as np
 import pickle
-from itertools import combinations_with_replacement
 from itertools import product
 
 column_intervention = [
@@ -13,25 +10,22 @@ column_intervention = [
     'Specialized Services',
     'Employment-Related Financial Supports for Job Seekers and Employers', 
     'Employer Financial Supports',
-    'Enhanced Referrals for Skills Development'
-]
+    'Enhanced Referrals for Skills Development']
 
-#loads the model into logic
-
-import os
-
+# Loads the model into logic
 current_dir = os.path.dirname(os.path.abspath(__file__))
 filename = os.path.join(current_dir, 'model.pkl')
 model = pickle.load(open(filename, "rb"))
 
 
 def clean_input_data(data):
-    #translate input into wahtever we trained the model on, numerical data in a specific order
-    columns = ["age","gender","work_experience","canada_workex","dep_num",	"canada_born",	
-               "citizen_status",	"level_of_schooling",	"fluent_english",	"reading_english_scale",	
-               "speaking_english_scale",	"writing_english_scale",	"numeracy_scale",	"computer_scale",	
-               "transportation_bool",	"caregiver_bool",	"housing",	"income_source",	"felony_bool",	"attending_school",	
-               "currently_employed",	"substance_use",	"time_unemployed",	"need_mental_health_support_bool"]
+    '''Translate input into what we trained the model on, numerical data in a specific order'''
+    columns = ["age", "gender", "work_experience", "canada_workex", "dep_num", "canada_born",
+                "citizen_status","level_of_schooling","fluent_english","reading_english_scale",
+                "speaking_english_scale", "writing_english_scale","numeracy_scale",
+                "computer_scale", "transportation_bool", "caregiver_bool", "housing",
+                "income_source", "felony_bool", "attending_school", "currently_employed",
+                "substance_use", "time_unemployed", "need_mental_health_support_bool"]
     demographics = {
         'age': data['age'],
         'gender': data['gender'],
@@ -60,7 +54,8 @@ def clean_input_data(data):
     }
     output = []
     for column in columns:
-        data = demographics.get(column, None) #default is None, and if you want to pass a value, can return any value
+         # If you want to pass a value, can return any value.
+        data = demographics.get(column, None)
         if isinstance(data, str):
             data = convert_text(column, data)
         output.append(data)
@@ -68,8 +63,8 @@ def clean_input_data(data):
 
 
 def convert_text(column, data:str):
-    # Convert text answers from front end into digits
-    # TODO: ensure that categorical columns match the valid answers in FormNew.jsx (L131)
+    '''Convert text answers from front end into digits.
+    TODO: ensure that categorical columns match the valid answers in FormNew.jsx (L131)'''
     categorical_cols_integers = [
         {
             "": 0,

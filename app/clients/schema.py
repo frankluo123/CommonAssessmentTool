@@ -1,7 +1,12 @@
-from pydantic import BaseModel
-from typing import Optional
+"""Model contains functions to create schema"""
 
+from typing import Optional
+from pydantic import BaseModel
+
+# pylint: disable=too-few-public-methods
 class PredictionInput(BaseModel):
+    """Create schema for PredictionInput"""
+
     age: int
     gender: str
     work_experience: int
@@ -27,7 +32,10 @@ class PredictionInput(BaseModel):
     time_unemployed: int
     need_mental_health_support_bool: str
 
+
 class ClientBase(BaseModel):
+    """Create schema for ClientBase"""
+
     name: str
     age: int
     gender: str
@@ -54,12 +62,14 @@ class ClientBase(BaseModel):
     time_unemployed: int
     need_mental_health_support_bool: bool
 
-# Schema for creating a new client
-class ClientCreate(ClientBase):
-     pass
 
-# Schema for updating client information with optional fields
+class ClientCreate(ClientBase):
+    """Schema for creating a new client"""
+
+
 class ClientUpdate(BaseModel):
+    """Schema for updating client information with optional fields"""
+
     name: Optional[str] = None
     age: Optional[int] = None
     gender: Optional[str] = None
@@ -86,9 +96,12 @@ class ClientUpdate(BaseModel):
     time_unemployed: Optional[int] = None
     need_mental_health_support_bool: Optional[bool] = None
 
-# Schema for reading client information, with ORM mode enabled
+
 class Client(ClientBase):
+    """Schema for reading client information, with ORM mode enabled"""
+
     id: int
-    
+
     class Config:
+        '''Class for configuring ORM'''
         orm_mode = True
