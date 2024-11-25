@@ -1,4 +1,4 @@
-from logic import interpret_and_calculate
+#from logic import interpret_and_calculate
 from itertools import combinations_with_replacement, product
 from fastapi.testclient import TestClient
 from app.main import app
@@ -49,6 +49,7 @@ Base.metadata.create_all(bind=engine)
 
 client = TestClient(app)
 
+
 def test_create_client():
     response = client.post(
         "/clients/",
@@ -61,18 +62,33 @@ def test_create_client():
     assert data["employment_status"] == "Employed"
     assert "id" in data
 
+
 def test_get_all_clients():
     response = client.get("/clients/")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
-def test_update_non_existent_client():
-    response = client.put(
-        "/clients/9999",
-        json={"name": "Non Existent Client"},
+
+def test_get_client_by_id():
+    # Create a client
+    response = client.post(
+        "/clients/",
+        json={
+            "name": "Jane Smith",
+            "email": "jane.smith@example.com",
+            "employment_status": "Unemployed"
+        },
     )
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Client not found"}
+    client_id = response.json()["id"]
+
+    # Retrieve the client by ID
+    response = client.get(f"/clients/{client_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["name"] == "Jane Smith"
+    assert data["email"] == "jane.smith@example.com"
+    assert data["employment_status"] == "Unemployed"
+
 
 def test_update_client():
     # Create a client
@@ -100,30 +116,15 @@ def test_update_client():
     assert data["email"] == "mark.b@example.com"
     assert data["employment_status"] == "Self-Employed"
 
-def test_delete_non_existent_client():
-    response = client.delete("/clients/9999")
+
+def test_update_non_existent_client():
+    response = client.put(
+        "/clients/9999",
+        json={"name": "Non Existent Client"},
+    )
     assert response.status_code == 404
     assert response.json() == {"detail": "Client not found"}
 
-def test_get_client_by_id():
-    # Create a client
-    response = client.post(
-        "/clients/",
-        json={
-            "name": "Jane Smith",
-            "email": "jane.smith@example.com",
-            "employment_status": "Unemployed"
-        },
-    )
-    client_id = response.json()["id"]
-
-    # Retrieve the client by ID
-    response = client.get(f"/clients/{client_id}")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["name"] == "Jane Smith"
-    assert data["email"] == "jane.smith@example.com"
-    assert data["employment_status"] == "Unemployed"
 
 def test_delete_client():
     # Create a client
@@ -145,3 +146,9 @@ def test_delete_client():
     # Verify the client no longer exists
     response = client.get(f"/clients/{client_id}")
     assert response.status_code == 404
+
+
+def test_delete_non_existent_client():
+    response = client.delete("/clients/9999")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Client not found"}
