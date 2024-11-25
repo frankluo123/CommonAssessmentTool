@@ -1,8 +1,12 @@
+'''Module providing functions for building the client model'''
+
 from sqlalchemy import Column, Integer, String, Boolean
 from app.database import Base  # Need to create database configuration module in app.database
 
-# Defining the Client model, representing the 'clients' table in the database
+
+# pylint: disable=too-few-public-methods
 class Client(Base):
+    '''Class defining the client model'''
     # Setting the table name for this model to 'clients'
     __tablename__ = 'clients'
 
@@ -34,6 +38,6 @@ class Client(Base):
     time_unemployed = Column(Integer)
     need_mental_health_support_bool = Column(Boolean)
 
-    # Provide a string representation of the Client instance
     def __repr__(self):
+        '''Provide string representation of the Client instance'''
         return f"<Client(name={self.name}, age={self.age}, gender={self.gender})>"
